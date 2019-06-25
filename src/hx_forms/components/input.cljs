@@ -1,5 +1,6 @@
 (ns hx-forms.components.input
   (:require
+   [goog.object :as gobj]
    [hx.react :refer [defnc]]
    [hx.hooks :as hooks]
 
@@ -7,13 +8,32 @@
 
 (def node-key :hx/input)
 
+(defn- get-value
+  [e]
+  (gobj/getValueByKeys e "target" "value"))
+
 (defnc Input
   [{:keys [node update-state]}]
-  (let [hx-params (u/get-hx-params node node-key)]
 
-    (hooks/useEffect
-     (fn []
-       (u/initialize-field! hx-params update-state))
-     [:on-mount])
+  (hooks/useEffect
+   (fn []
+     (u/initialize-field! {:node node
+                           :node-key node-key
+                           :update-state update-state
+                           :defaults {:default-value ""}}))
+   ["on-mount"])
 
-    (u/remove-node-params node node-key)))
+  (let [field-key
+        (u/get-field-key node node-key)
+
+        input
+        (hooks/useMemo
+         (fn []
+           (-> node
+               (u/remove-hx-props node-key)
+               (u/merge-with-props
+                {:on-change (partial u/on-change! {:update-state update-state
+                                                   :field-key field-key
+                                                   :get-value get-value})})))
+         ["no-update"])]
+    input))

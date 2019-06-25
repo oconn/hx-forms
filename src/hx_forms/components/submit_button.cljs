@@ -8,5 +8,5 @@
 
 (defnc SubmitButton
   [{:keys [node]}]
-  (let [hx-params (u/get-hx-params node node-key)]
-    (u/remove-node-params node node-key)))
+  (let [[hx-props node-props] (u/get-field-props node node-key)]
+    (u/remove-hx-props node node-key)))

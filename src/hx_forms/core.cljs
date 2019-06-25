@@ -1,13 +1,14 @@
 (ns hx-forms.core
   (:require
    [clojure.walk :refer [postwalk]]
-   ["react" :as react]
    [hx.react :as hx :refer [defnc]]
    [hx.hooks :as hooks]
 
    [hx-forms.components.form :as form]
    [hx-forms.components.input :as input]
    [hx-forms.components.submit-button :as submit-button]))
+
+(def ^{:private true} hx-field-params #{:field-key})
 
 (defn- hx-node-type?
   "Checks to see if any given node is an hx field of a specific type"
@@ -68,10 +69,31 @@
         :else
         node))))
 
+(defn- apply-field-initialization
+  [state {:keys [field-key field-state]}]
+  (if (keyword? field-key)
+    (assoc state field-key field-state)
+    (do
+      (js/console.error
+       "Initialized field must contain the the keyword 'field-key'")
+      state)))
+
+(defn- apply-field-change
+  [state {:keys [field-key value]}]
+  (assoc-in state [field-key :value] value))
+
 (defn- form-state-reducer
-  [state event]
-  (js/console.log event)
-  state)
+  [state {:keys [action payload]}]
+  (let [new-state
+        (case action
+          :initialize-field (apply-field-initialization state payload)
+          :change-field (apply-field-change state payload)
+
+          (do
+            (js/console.error "Invalid state-reducer action '" action "'")
+            state))]
+    (js/console.log new-state)
+    new-state))
 
 (defnc Form
   [{:keys [on-mount on-unmount body]
@@ -79,16 +101,23 @@
          on-unmount identity}
     :as form-spec}]
   (let [[form-state update-state] (hooks/useReducer form-state-reducer {})]
+
     (hooks/useEffect
      (fn []
        (on-mount {:form-state form-state
                   :reset-form #()})
        (fn []
          (on-unmount)))
-     [:on-mount])
+     ["on-mount"])
 
-    (postwalk (walk-node {:form-spec form-spec
-                          :form-state form-state
-                          :update-state update-state}) body)))
+    (let [form
+          (hooks/useMemo
+           (fn []
+             (postwalk (walk-node {:form-spec form-spec
+                                   :form-state form-state
+                                   :update-state update-state})
+                       body))
+           ["no-update"])]
+      form)))
 
-(def HXForm Form #_(js-invoke react "memo" Form))
+(def HXForm Form)
