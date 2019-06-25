@@ -4,6 +4,7 @@
    [hx.react :as hx :refer [defnc]]
    [hx.hooks :as hooks]
 
+   [hx-forms.utils :as u]
    [hx-forms.components.form :as form]
    [hx-forms.components.input :as input]
    [hx-forms.components.submit-button :as submit-button]))
@@ -82,17 +83,33 @@
   [state {:keys [field-key value]}]
   (assoc-in state [field-key :value] value))
 
+(defn- process-validator
+  [field-value form-state]
+  (fn [errors {:keys [validator error]}]
+    (if (false? (validator field-value form-state))
+      (conj errors error)
+      errors)))
+
+(defn- apply-field-validation
+  [state {:keys [field-key]}]
+  (let [field-value (u/get-field-value state field-key)
+        field-validators (u/get-field-validators state field-key)
+        errors (reduce (process-validator field-value state)
+                       []
+                       field-validators)]
+    (assoc-in state [field-key :errors] errors)))
+
 (defn- form-state-reducer
   [state {:keys [action payload]}]
   (let [new-state
         (case action
           :initialize-field (apply-field-initialization state payload)
           :change-field (apply-field-change state payload)
+          :validate-field (apply-field-validation state payload)
 
           (do
             (js/console.error "Invalid state-reducer action '" action "'")
             state))]
-    (js/console.log new-state)
     new-state))
 
 (defnc Form
@@ -110,14 +127,9 @@
          (on-unmount)))
      ["on-mount"])
 
-    (let [form
-          (hooks/useMemo
-           (fn []
-             (postwalk (walk-node {:form-spec form-spec
-                                   :form-state form-state
-                                   :update-state update-state})
-                       body))
-           ["no-update"])]
-      form)))
+    (postwalk (walk-node {:form-spec form-spec
+                          :form-state form-state
+                          :update-state update-state})
+              body)))
 
 (def HXForm Form)

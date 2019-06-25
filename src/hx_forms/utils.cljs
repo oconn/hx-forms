@@ -8,7 +8,10 @@
     :or {defaults {}}}]
   {:value (or (:default-value node-props)
               (:default-value hx-props)
-              (:default-value defaults))})
+              (:default-value defaults))
+   :validators (or (:validators hx-props)
+                   (:validators defaults)
+                   [])})
 
 (defn get-node-props
   [node node-key]
@@ -28,6 +31,18 @@
       (get-hx-props node-key)
       (:field-key)))
 
+(defn get-field-value
+  [state field-key]
+  (get-in state [field-key :value]))
+
+(defn get-field-validators
+  [state field-key]
+  (get-in state [field-key :validators]))
+
+(defn get-field-errors
+  [state field-key]
+  (get-in state [field-key :errors]))
+
 (defn remove-hx-props
   [node node-key]
   (assoc node 1 (dissoc (get node 1) node-key)))
@@ -42,6 +57,12 @@
    {:action :change-field
     :payload {:field-key field-key
               :value (get-value e)}}))
+
+(defn validate-field!
+  [{:keys [update-state field-key]} e]
+  (update-state
+   {:action :validate-field
+    :payload {:field-key field-key}}))
 
 (defn initialize-field!
   [{:keys [node node-key update-state defaults]}]
