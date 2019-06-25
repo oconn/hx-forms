@@ -4,6 +4,7 @@
    [hx.react :refer [defnc]]
    [hx.hooks :as hooks]
 
+   [hx-forms.components.field :refer [Field]]
    [hx-forms.utils :as u]))
 
 (def node-key :hx/input)
@@ -41,7 +42,5 @@
                  :on-blur (partial u/validate-field! {:update-state update-state
                                                       :field-key field-key})})))
          ["no-update"])]
-    [:div
-     (when (seq errors)
-       [:h1 (first errors)])
+    [Field {:errors errors}
      input]))
