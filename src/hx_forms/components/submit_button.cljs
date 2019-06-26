@@ -7,6 +7,7 @@
 (def node-key :hx/submit-button)
 
 (defnc SubmitButton
-  [{:keys [node]}]
-  (let [[hx-props node-props] (u/get-field-props node node-key)]
-    (u/remove-hx-props node node-key)))
+  [{:keys [node is-submitting]}]
+  [:div {:class ["hx-forms--submit-button-container"]}
+   (assoc-in (u/remove-hx-props node node-key)
+             [1 :disabled] is-submitting)])

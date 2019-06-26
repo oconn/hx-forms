@@ -81,30 +81,28 @@
 
 (defn- apply-field-change
   [state {:keys [field-key value]}]
-  (assoc-in state [field-key :value] value))
-
-(defn- process-validator
-  [field-value form-state]
-  (fn [errors {:keys [validator error]}]
-    (if (false? (validator field-value form-state))
-      (conj errors error)
-      errors)))
+  (let [{:keys [errors validators formatters]} (u/get-field state field-key)
+        new-value (u/process-formatters formatters value state)
+        new-errors (if (pos? (count errors))
+                     (u/process-validators validators new-value state)
+                     errors)]
+    (update state field-key merge {:value new-value
+                                   :errors new-errors})))
 
 (defn- apply-field-validation
   [state {:keys [field-key]}]
   (let [field-value (u/get-field-value state field-key)
         field-validators (u/get-field-validators state field-key)
-        errors (reduce (process-validator field-value state)
-                       []
-                       field-validators)]
+        errors (u/process-validators field-validators field-value state)]
     (assoc-in state [field-key :errors] errors)))
 
 (defn- form-state-reducer
   [state {:keys [action payload]}]
   (let [new-state
         (case action
-          :initialize-field (apply-field-initialization state payload)
           :change-field (apply-field-change state payload)
+          :initialize-field (apply-field-initialization state payload)
+          :set-form-state payload
           :validate-field (apply-field-validation state payload)
 
           (do
@@ -113,9 +111,10 @@
     new-state))
 
 (defnc Form
-  [{:keys [on-mount on-unmount body]
+  [{:keys [on-mount on-unmount is-submitting body]
     :or {on-mount identity
-         on-unmount identity}
+         on-unmount identity
+         is-submitting false}
     :as form-spec}]
   (let [[form-state update-state] (hooks/useReducer form-state-reducer {})]
 
@@ -129,7 +128,8 @@
 
     (postwalk (walk-node {:form-spec form-spec
                           :form-state form-state
-                          :update-state update-state})
+                          :update-state update-state
+                          :is-submitting is-submitting})
               body)))
 
 (def HXForm Form)

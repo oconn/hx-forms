@@ -16,3 +16,8 @@
   [max-length]
   (fn [field-value _]
     (<= (count field-value) max-length)))
+
+(defn simple-email
+  "Input field matchs a simple email regular expression"
+  [field-value _]
+  (some? (re-matches #"(.+)@(.+)\.(.+){2,}" field-value)))
