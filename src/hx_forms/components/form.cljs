@@ -24,4 +24,4 @@
               (if (u/contains-errors? validated-form-state)
                 (update-state {:action :set-form-state
                                :payload validated-form-state})
-                (on-submit form-state e))))}))))
+                (on-submit (u/form-state->values form-state) e))))}))))

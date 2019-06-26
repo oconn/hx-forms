@@ -104,6 +104,14 @@
   [node value]
   (update-in node [1] merge value))
 
+(defn form-state->values
+  [form-state]
+  (reduce
+   (fn [acc [field-key {:keys [value]}]]
+     (assoc acc field-key value))
+   {}
+   form-state))
+
 (defn on-change!
   [{:keys [field-key update-state get-value callback]} e]
   (update-state
@@ -122,9 +130,6 @@
 
   (when (some? callback)
     (callback e)))
-
-(defn validate-form!
-  [{:keys [update-state]} e])
 
 (defn initialize-field!
   [{:keys [node node-key update-state defaults]}]
