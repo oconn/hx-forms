@@ -7,6 +7,8 @@
    [hx-forms.utils :as u]
    [hx-forms.components.form :as form]
    [hx-forms.components.input :as input]
+   [hx-forms.components.select :as select]
+   [hx-forms.components.toggle :as toggle]
    [hx-forms.components.submit-button :as submit-button]))
 
 (def ^{:private true} hx-field-params #{:field-key})
@@ -33,8 +35,14 @@
         (hx-node-type? node input/node-key)
         [input/Input hx-comp-props]
 
+        (hx-node-type? node select/node-key)
+        [select/Select hx-comp-props]
+
         (hx-node-type? node submit-button/node-key)
         [submit-button/SubmitButton hx-comp-props]
+
+        (hx-node-type? node toggle/node-key)
+        [toggle/Toggle hx-comp-props]
 
         ;; (rf-node? node :rf/select-input)
         ;; [select-input/mount-select-input {:node node

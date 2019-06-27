@@ -23,6 +23,7 @@
                            :update-state update-state
                            :defaults {:default-value ""}}))
    ["on-mount"])
+
   (let [field-key
         (u/get-field-key node node-key)
 
@@ -32,7 +33,10 @@
         errors
         (u/get-field-errors form-state field-key)
 
-        [hx-props {:keys [on-change on-blur] :as node-props}]
+        [hx-props {:keys [on-change on-blur]
+                   :as node-props
+                   :or {on-change identity
+                        on-blur identity}}]
         (u/get-field-props node node-key)
 
         input
