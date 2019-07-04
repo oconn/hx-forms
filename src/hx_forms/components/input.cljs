@@ -13,6 +13,8 @@
   [e]
   (gobj/getValueByKeys e "target" "value"))
 
+(def ^{:private true} default-value "")
+
 (defnc Input
   [{:keys [node update-state form-state is-submitting]}]
 
@@ -21,7 +23,7 @@
      (u/initialize-field! {:node node
                            :node-key node-key
                            :update-state update-state
-                           :defaults {:default-value ""}}))
+                           :defaults {:default-value default-value}}))
    ["on-mount"])
 
   (let [field-key
@@ -62,5 +64,6 @@
      ;; Controlled input fields allow for formatters and
      ;; masks to work properly
      (-> input
-         (assoc-in [1 :value] field-value)
+         (update-in [1] #(dissoc % :default-value))
+         (assoc-in [1 :value] (or field-value default-value))
          (assoc-in [1 :disabled] is-submitting))]))
