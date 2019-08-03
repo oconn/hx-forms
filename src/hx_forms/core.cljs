@@ -5,6 +5,7 @@
    [hx.hooks :as hooks]
 
    [hx-forms.utils :as u]
+   [hx-forms.components.custom-field :as custom-field]
    [hx-forms.components.form :as form]
    [hx-forms.components.input :as input]
    [hx-forms.components.select :as select]
@@ -44,6 +45,9 @@
         (hx-node-type? node toggle/node-key)
         [toggle/Toggle hx-comp-props]
 
+        (hx-node-type? node :hx/custom-field)
+        [custom-field/CustomField hx-comp-props]
+
         ;; (rf-node? node :rf/select-input)
         ;; [select-input/mount-select-input {:node node
         ;;                                   :form-state form-state
@@ -69,11 +73,6 @@
         ;; (rf-node? node :rf/hidden-field)
         ;; [hidden-field/mount-hidden-field {:node node
         ;;                                   :form-state form-state}]
-
-        ;; (rf-node? node :rf/custom-field)
-        ;; (render-custom-field {:node node
-        ;;                       :form-state form-state
-        ;;                       :is-submitting is-submitting})
 
         :else
         node))))
