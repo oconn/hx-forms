@@ -32,6 +32,11 @@
      :border (gs [:borders :border-50-1])
      :cursor :default}}))
 
+(def textarea-field-styles
+  {:min-width "100%"
+   :max-width "100%"
+   :min-height "100px"})
+
 (defonce toggle-btn-width 23)
 
 (def toggle-button-styles
@@ -198,10 +203,11 @@
   {".hx-forms--field-container"
    {:position :relative
     :width "100%"
-    :margin-bottom (gs [:spacing :p8])
+    :margin-bottom (gs [:spacing :p16])
     :padding-bottom (gs [:spacing :p16])}
 
-   ".hx-forms--field-container-error > input"
+   ".hx-forms--field-container-error > input,
+    .hx-forms--field-container-error > textarea"
    {:border-color (str (gs [:colors :error-500]) " !important")
     "&::placeholder"
     {:color (gs [:colors :error-300])}}
@@ -235,6 +241,8 @@
     "input[type=search]" input-field-styles
     "input[type=url]" input-field-styles
     "input[type=password]" input-field-styles
+    "textarea" (merge input-field-styles
+                      textarea-field-styles)
 
     ".hx-forms--submit-button-container"
     {:position :relative
