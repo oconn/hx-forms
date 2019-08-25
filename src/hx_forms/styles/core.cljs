@@ -21,7 +21,7 @@
     :border-radius (gs [:radius :r4])
 
     "&::placeholder"
-    {:color (gs [:colors :gray-scale-300])}
+    {:color (gs [:colors :gray-scale-200])}
 
     "&:focus"
     {:border-color (gs [:colors :primary-500])}
@@ -210,7 +210,7 @@
     .hx-forms--field-container-error > textarea"
    {:border-color (str (gs [:colors :error-500]) " !important")
     "&::placeholder"
-    {:color (gs [:colors :error-300])}}
+    {:color (gs [:colors :error-100])}}
 
    ".hx-forms--field-container-error > label"
    {:color (gs [:colors :error-500])}
@@ -243,6 +243,18 @@
     "input[type=password]" input-field-styles
     "textarea" (merge input-field-styles
                       textarea-field-styles)
+
+    ".hx-forms--submit-button-outer-container"
+    {:position :relative
+     :padding-top (gs [:spacing :p24])
+
+     "& .hx-forms--submit-button-form-error-message"
+     (merge
+      (create-font-styles {:style :caption-30
+                           :color :error-500
+                           :family :primary})
+      {:position :absolute
+       :top (gs [:spacing :p0])})}
 
     ".hx-forms--submit-button-container"
     {:position :relative
