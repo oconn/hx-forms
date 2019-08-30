@@ -3,16 +3,18 @@
 (defn- format-field-state
   [{:keys [hx-props node-props defaults]
     :or {defaults {}}}]
-  {:value (or (:default-value node-props)
-              (:default-value hx-props)
-              (:default-value defaults))
-   :errors []
-   :formatters (or (:formatters hx-props)
-                   (:formatters defaults)
-                   [])
-   :validators (or (:validators hx-props)
-                   (:validators defaults)
-                   [])})
+  (let [initial-value (or (:default-value node-props)
+                          (:default-value hx-props)
+                          (:default-value defaults))]
+    {:value initial-value
+     :initial-value initial-value
+     :errors []
+     :formatters (or (:formatters hx-props)
+                     (:formatters defaults)
+                     [])
+     :validators (or (:validators hx-props)
+                     (:validators defaults)
+                     [])}))
 
 (defn contains-errors?
   [form-state]

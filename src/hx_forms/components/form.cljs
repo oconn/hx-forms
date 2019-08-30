@@ -1,7 +1,6 @@
 (ns hx-forms.components.form
   (:require
    [hx.react :refer [defnc]]
-   [hx.hooks :as hooks]
 
    [hx-forms.utils :as u]))
 
@@ -12,11 +11,22 @@
   (let [[hx-props node-props] (u/get-field-props node node-key)
         on-submit (or (:on-submit node-props)
                       (:on-submit hx-props)
-                      identity)]
+                      identity)
+        on-reset (or (:on-reset node-props)
+                     (:on-reset hx-props)
+                     identity)]
+
     (-> node
         (u/remove-hx-props node-key)
         (u/merge-with-props
-         {:on-submit
+         {:on-reset
+          (fn [e]
+            (js-invoke e "preventDefault")
+
+            (update-state {:action :reset-form-state})
+            (on-reset e))
+
+          :on-submit
           (fn [e]
             (js-invoke e "preventDefault")
 
