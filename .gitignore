@@ -17,3 +17,4 @@ figwheel_server.log
 node_modules
 dist
 app.jar
+.cljs_node_repl

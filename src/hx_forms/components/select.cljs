@@ -98,10 +98,12 @@
         errors
         (u/get-field-errors form-state field-key)
 
-        [{:keys [on-change on-blur options disabled default-value]
+        is-visible
+        (u/get-field-visibility form-state field-key)
+
+        [{:keys [on-change options disabled default-value]
           :as hx-props
-          :or {on-change identity
-               on-blur identity}} _]
+          :or {on-change identity}} _]
         (u/get-field-props node node-key)]
 
     (hooks/useEffect
@@ -114,7 +116,8 @@
 
     [Field {:errors errors
             :label (:label hx-props)
-            :field-key field-key}
+            :field-key field-key
+            :visible is-visible}
      [SelectComponent {:on-change (partial u/on-change!
                                            {:update-state update-state
                                             :field-key field-key

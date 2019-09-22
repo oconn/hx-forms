@@ -15,9 +15,13 @@
         errors
         (u/get-field-errors form-state field-key)
 
+        is-visible
+        (u/get-field-visibility form-state field-key)
+
         [{:keys [label render]} _]
         (u/get-field-props node node-key)]
     [Field {:errors errors
             :label label
-            :field-key field-key}
+            :field-key field-key
+            :visible is-visible}
      [render hx-field-props]]))

@@ -35,6 +35,9 @@
         errors
         (u/get-field-errors form-state field-key)
 
+        is-visible
+        (u/get-field-visibility form-state field-key)
+
         [{:keys [on-change disabled default-value]
           :as hx-props
           :or {on-change identity}} _]
@@ -50,7 +53,9 @@
 
     [Field {:errors errors
             :label (:label hx-props)
-            :field-key field-key}
+            :field-key field-key
+            :classname ["hx-forms--toggle-field-container"]
+            :visible is-visible}
      [ToggleComponent {:on-change (partial u/on-change!
                                            {:update-state update-state
                                             :field-key field-key

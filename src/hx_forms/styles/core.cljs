@@ -215,6 +215,16 @@
    ".hx-forms--field-container-error > label"
    {:color (gs [:colors :error-500])}
 
+   ".hx-forms--field-container-hidden"
+   {:display :none}
+
+   ".hx-forms--toggle-field-container"
+   {:display :flex
+    :align-items :center
+
+    "& > label"
+    {:margin-right (gs [:spacing :p12])}}
+
    ".hx-forms--field-active-error"
    (merge
     (create-font-styles {:style :caption-20

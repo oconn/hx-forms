@@ -17,3 +17,13 @@
 (defn simple-email
   [field-value _]
   (some? (re-matches #"(.+)@(.+)\.(.+){2,}" field-value)))
+
+(defn hex-validator
+  [field-value _]
+  (some? (re-matches #"#[a-f0-9]{6}" field-value)))
+
+(def hex-validators
+  [{:validator required-input
+    :error "Please enter a hex value"}
+   {:validator hex-validator
+    :error "Please enter a valid hex value"}])

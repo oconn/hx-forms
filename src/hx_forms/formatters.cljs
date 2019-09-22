@@ -65,3 +65,27 @@
       (js/console.error
        (str "Invalid type " (type field-value) " passed to upper-case"))
       field-value)))
+
+(def ^{:private true} hex-char-filter
+  (->string-formatter "[#a-f0-9]"))
+
+(def ^{:private true} hex-length-filter
+  (->max-length-formatter 7))
+
+(defn- enforce-hex-pound
+  "Ensures the first char is the pound char"
+  [field-value _]
+  (if (string? field-value)
+    (if (= (first field-value) "#")
+      field-value
+      (str "#" field-value))
+    (do
+      (js/console.error
+       (str "Invalid type " (type field-value) " passed to trim"))
+      field-value)))
+
+(def hex-formatters
+  [lower-case
+   hex-char-filter
+   enforce-hex-pound
+   hex-length-filter])

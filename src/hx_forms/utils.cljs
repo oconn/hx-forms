@@ -1,4 +1,25 @@
-(ns hx-forms.utils)
+(ns hx-forms.utils
+  (:require [clojure.spec.alpha :as s]))
+
+(s/def ::value any?)
+(s/def ::initial-value any?)
+(s/def ::error string?)
+(s/def ::errors (s/coll-of ::error))
+(s/def ::visibility ifn?)
+(s/def ::formatter ifn?)
+(s/def ::formatters (s/coll-of ::formatter))
+(s/def ::validator ifn?)
+(s/def ::validator (s/keys :req-un [::validator
+                                    ::error]))
+
+(s/def ::field-state (s/keys :req-un [::value
+                                      ::initial-value
+                                      ::errors
+                                      ::visibility
+                                      ::formatters
+                                      ::validators]))
+
+(s/def ::form-state (s/map-of keyword ::field-state))
 
 (defn- format-field-state
   [{:keys [hx-props node-props defaults]
@@ -9,6 +30,9 @@
     {:value initial-value
      :initial-value initial-value
      :errors []
+     :visibility (or (:visibility hx-props)
+                     (:visibility defaults)
+                     (constantly true))
      :formatters (or (:formatters hx-props)
                      (:formatters defaults)
                      [])
@@ -63,6 +87,12 @@
   [state field-key]
   (get-in state [field-key :errors]))
 
+(defn get-field-visibility
+  [state field-key]
+  (let [visibility-validator (get-in state [field-key :visibility]
+                                     (constantly true))]
+    (visibility-validator state)))
+
 (defn- process-validator
   [field-value form-state]
   (fn [errors {:keys [validator error]}]
@@ -109,8 +139,10 @@
 (defn form-state->values
   [form-state]
   (reduce
-   (fn [acc [field-key {:keys [value]}]]
-     (assoc acc field-key value))
+   (fn [acc [field-key {:keys [value visibility]}]]
+     (if (true? (visibility form-state))
+       (assoc acc field-key value)
+       acc))
    {}
    form-state))
 

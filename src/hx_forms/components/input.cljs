@@ -35,6 +35,9 @@
         errors
         (u/get-field-errors form-state field-key)
 
+        is-visible
+        (u/get-field-visibility form-state field-key)
+
         [hx-props {:keys [on-change on-blur]
                    :as node-props
                    :or {on-change identity
@@ -60,7 +63,8 @@
 
     [Field {:errors errors
             :label (:label hx-props)
-            :field-key field-key}
+            :field-key field-key
+            :visible is-visible}
      ;; Controlled input fields allow for formatters and
      ;; masks to work properly
      (-> input
