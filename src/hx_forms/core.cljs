@@ -89,8 +89,7 @@
 
     (hooks/useEffect
      (fn []
-       (on-mount {:form-state form-state
-                  :reset-form #()})
+       (on-mount {:form-state form-state})
        (fn []
          (on-unmount)))
      ["on-mount"])
