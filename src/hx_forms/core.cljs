@@ -5,6 +5,7 @@
    [hx.hooks :as hooks]
 
    [hx-forms.reducer :as r]
+   [hx-forms.utils :as u]
    [hx-forms.components.custom-field :as custom-field]
    [hx-forms.components.form :as form]
    [hx-forms.components.input :as input]
@@ -89,6 +90,7 @@
 
     (hooks/useEffect
      (fn []
+       (update-state {:action :calculate-visibility})
        (on-mount {:form-state form-state})
        (fn []
          (on-unmount)))

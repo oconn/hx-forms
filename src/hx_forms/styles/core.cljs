@@ -239,11 +239,49 @@
                          :color :gray-scale-600
                          :family :primary}))})
 
+(def responsive-styles
+  {".hx-forms--row-4-2-1"
+   {:display :flex
+    :flex-wrap :wrap
+    :justify-content :space-between
+
+    "& > .hx-forms--field-container"
+    {:width "calc(25% - 10px)"
+
+     (gs [:queries :tablet])
+     {:width "calc(50% - 10px)"}
+
+     (gs [:queries :phone])
+     {:width "100%)"}}}
+
+   ".hx-forms--row-2-2-1"
+   {:display :flex
+    :flex-wrap :wrap
+    :justify-content :space-between
+
+    "& > .hx-forms--field-container"
+    {:width "calc(50% - 10px)"
+
+     (gs [:queries :phone])
+     {:width "100%"}}}
+
+   ".hx-forms--row-2-1-1"
+   {:display :flex
+    :flex-wrap :wrap
+    :justify-content :space-between
+
+    "& > .hx-forms--field-container"
+    {:width "calc(50% - 10px)"
+
+     (gs [:queries :tablet-below])
+     {:width "100%"}}}})
+
 (def hx-form-styles
   (merge
    select-styles
    toggle-button-styles
    checkbox-styles
+   responsive-styles
    field-styles
    {"input[type=text]" input-field-styles
     "input[type=email]" input-field-styles

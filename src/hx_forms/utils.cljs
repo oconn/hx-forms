@@ -5,7 +5,10 @@
 (s/def ::initial-value any?)
 (s/def ::error string?)
 (s/def ::errors (s/coll-of ::error))
-(s/def ::visibility ifn?)
+(s/def ::is-visible boolean?)
+(s/def ::visibility-validator ifn?)
+(s/def ::visibility (s/keys :req-un [::is-visible
+                                     ::visibility-validator]))
 (s/def ::formatter ifn?)
 (s/def ::formatters (s/coll-of ::formatter))
 (s/def ::validator ifn?)
@@ -30,9 +33,10 @@
     {:value initial-value
      :initial-value initial-value
      :errors []
-     :visibility (or (:visibility hx-props)
-                     (:visibility defaults)
-                     (constantly true))
+     :visibility {:is-visible true
+                  :visibility-validator (or (:visibility hx-props)
+                                            (:visibility defaults)
+                                            (constantly true))}
      :formatters (or (:formatters hx-props)
                      (:formatters defaults)
                      [])
@@ -89,9 +93,11 @@
 
 (defn get-field-visibility
   [state field-key]
-  (let [visibility-validator (get-in state [field-key :visibility]
-                                     (constantly true))]
-    (visibility-validator state)))
+  (get-in state [field-key :visibility :is-visible]))
+
+(defn- process-visibility
+  [form-state]
+  form-state)
 
 (defn- process-validator
   [field-value form-state]
@@ -108,14 +114,23 @@
 
 (defn process-all-validators
   [form-state]
-  (reduce
-   (fn [form-state-acc field-key]
-     (let [{:keys [value validators]} (get form-state-acc field-key)]
-       (assoc-in form-state-acc
-                 [field-key :errors]
-                 (process-validators validators value form-state-acc))))
-   form-state
-   (keys form-state)))
+  (reduce-kv
+   (fn [updated-state field-key field]
+     (let [{:keys [value validators visibility]}
+           field
+
+           {:keys [is-visible]}
+           visibility
+
+           updated-field
+           (if (false? is-visible)
+             (assoc field :errors [])
+             (assoc field :errors (process-validators validators
+                                                      value
+                                                      form-state)))]
+       (assoc updated-state field-key updated-field)))
+   {}
+   form-state))
 
 (defn- process-formatter
   [form-state]
@@ -140,7 +155,7 @@
   [form-state]
   (reduce
    (fn [acc [field-key {:keys [value visibility]}]]
-     (if (true? (visibility form-state))
+     (if (true? (:is-visible visibility))
        (assoc acc field-key value)
        acc))
    {}

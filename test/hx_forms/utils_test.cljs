@@ -108,16 +108,23 @@
            (false?)))))
 
 (deftest process-all-validators
-  (let [form-state
-        (u/process-all-validators
-         {:field-one (#'u/format-field-state
-                      {:hx-props {:default-value "one"
-                                  :validators [{:validator #(-> % count pos?)
-                                                :error "Required"}]}})
-          :field-two (#'u/format-field-state
-                      {:hx-props {:default-value ""
-                                  :validators [{:validator #(-> % count pos?)
-                                                :error "Required"}]}})})]
+  (let [validators
+        [{:validator #(-> % count pos?) :error "Required"}]
+
+        form-state
+        (-> {:field-one (#'u/format-field-state
+                         {:hx-props {:default-value "one"
+                                     :validators validators}})
+             :field-two (#'u/format-field-state
+                         {:hx-props {:default-value ""
+                                     :validators validators}})
+
+             :field-three (#'u/format-field-state
+                           {:hx-props {:default-value ""
+                                       :validators validators
+                                       :visibility (constantly false)}})}
+            (reducer {:action :calculate-visibility})
+            (u/process-all-validators))]
 
     (testing "Is valid form-state"
       (is (s/valid? ::u/form-state form-state)))
@@ -131,7 +138,12 @@
       (is (-> form-state
               (u/get-field-errors :field-two)
               (count)
-              (pos?))))))
+              (pos?)))
+
+      (is (-> form-state
+              (u/get-field-errors :field-three)
+              (count)
+              (zero?))))))
 
 (deftest form-state->values
   (testing "Returns all the values in a form"
