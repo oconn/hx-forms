@@ -14,12 +14,15 @@
 (s/def ::validator ifn?)
 (s/def ::validator (s/keys :req-un [::validator
                                     ::error]))
+(s/def ::transformer ifn?)
+(s/def ::transformers (s/coll-of ::transformer))
 
 (s/def ::field-state (s/keys :req-un [::value
                                       ::initial-value
                                       ::errors
                                       ::visibility
                                       ::formatters
+                                      ::transformers
                                       ::validators]))
 
 (s/def ::form-state (s/map-of keyword ::field-state))
@@ -42,7 +45,10 @@
                      [])
      :validators (or (:validators hx-props)
                      (:validators defaults)
-                     [])}))
+                     [])
+     :transformers (or (:transformers hx-props)
+                       (:transformers defaults)
+                       [identity])}))
 
 (defn contains-errors?
   [form-state]
@@ -154,10 +160,11 @@
 (defn form-state->values
   [form-state]
   (reduce
-   (fn [acc [field-key {:keys [value visibility]}]]
-     (if (true? (:is-visible visibility))
-       (assoc acc field-key value)
-       acc))
+   (fn [acc [field-key {:keys [value visibility transformers]}]]
+     (let [transform-with (apply comp transformers)]
+       (if (true? (:is-visible visibility))
+         (assoc acc field-key (transform-with value))
+         acc)))
    {}
    form-state))
 

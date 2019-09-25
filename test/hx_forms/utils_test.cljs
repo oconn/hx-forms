@@ -4,6 +4,7 @@
    [clojure.spec.alpha :as s]
 
    [hx-forms.reducer :as r]
+   [hx-forms.transformers :as t]
    [hx-forms.utils :as u]))
 
 (def ^:private reducer
@@ -151,8 +152,12 @@
           {:field-one (#'u/format-field-state
                        {:hx-props {:default-value "one"}})
            :field-two (#'u/format-field-state
-                       {:hx-props {:default-value "two"}})}]
+                       {:hx-props {:default-value "two"}})
+           :field-three (#'u/format-field-state
+                         {:hx-props {:default-value "123"
+                                     :transformers [t/str->int]}})}]
       (is (s/valid? ::u/form-state form-state))
       (is (= {:field-one "one"
-              :field-two "two"}
+              :field-two "two"
+              :field-three 123}
              (u/form-state->values form-state))))))
