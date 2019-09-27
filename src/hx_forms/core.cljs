@@ -5,15 +5,13 @@
    [hx.hooks :as hooks]
 
    [hx-forms.reducer :as r]
-   [hx-forms.utils :as u]
    [hx-forms.components.custom-field :as custom-field]
    [hx-forms.components.form :as form]
    [hx-forms.components.input :as input]
    [hx-forms.components.select :as select]
    [hx-forms.components.toggle :as toggle]
+   [hx-forms.components.checkbox :as checkbox]
    [hx-forms.components.submit-button :as submit-button]))
-
-(def ^{:private true} hx-field-params #{:field-key})
 
 (defn- hx-node-type?
   "Checks to see if any given node is an hx field of a specific type"
@@ -40,40 +38,17 @@
         (hx-node-type? node select/node-key)
         [select/Select hx-comp-props]
 
-        (hx-node-type? node submit-button/node-key)
-        [submit-button/SubmitButton hx-comp-props]
-
         (hx-node-type? node toggle/node-key)
         [toggle/Toggle hx-comp-props]
+
+        (hx-node-type? node checkbox/node-key)
+        [checkbox/Checkbox hx-comp-props]
 
         (hx-node-type? node :hx/custom-field)
         [custom-field/CustomField hx-comp-props]
 
-        ;; (rf-node? node :rf/select-input)
-        ;; [select-input/mount-select-input {:node node
-        ;;                                   :form-state form-state
-        ;;                                   :is-submitting is-submitting}]
-
-        ;; (rf-node? node :rf/field-error)
-        ;; [field-error/mount-field-error {:node node
-        ;;                                 :form-state form-state}]
-
-        ;; (rf-node? node :rf/field-hint)
-        ;; [field-hint/mount-field-hint {:node node
-        ;;                               :form-state form-state}]
-
-        ;; (rf-node? node :rf/form-errors)
-        ;; [form-errors/mount-form-errors {:node node
-        ;;                                 :form-state form-state}]
-
-        ;; (rf-node? node :rf/submit-button)
-        ;; [submit-button/mount-submit-button {:node node
-        ;;                                     :form-state form-state
-        ;;                                     :is-submitting is-submitting}]
-
-        ;; (rf-node? node :rf/hidden-field)
-        ;; [hidden-field/mount-hidden-field {:node node
-        ;;                                   :form-state form-state}]
+        (hx-node-type? node submit-button/node-key)
+        [submit-button/SubmitButton hx-comp-props]
 
         :else
         node))))
@@ -92,6 +67,7 @@
      (fn []
        (update-state {:action :calculate-visibility})
        (on-mount {:form-state form-state})
+
        (fn []
          (on-unmount)))
      ["on-mount"])

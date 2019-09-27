@@ -218,7 +218,7 @@
    ".hx-forms--field-container-hidden"
    {:display :none}
 
-   ".hx-forms--toggle-field-container"
+   ".hx-forms--toggle-field-container, .hx-forms--checkbox-field-container"
    {:display :flex
     :align-items :center
 
@@ -289,6 +289,7 @@
     "input[type=search]" input-field-styles
     "input[type=url]" input-field-styles
     "input[type=password]" input-field-styles
+    "input[type=date]" input-field-styles
     "textarea" (merge input-field-styles
                       textarea-field-styles)
 

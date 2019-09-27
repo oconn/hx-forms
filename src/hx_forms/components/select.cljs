@@ -106,6 +106,11 @@
           :or {on-change identity}} _]
         (u/get-field-props node node-key)]
 
+
+    (when (nil? options)
+      (js/console.error
+       (str "No options were provided to select component " field-key)))
+
     (hooks/useEffect
      (fn []
        (u/initialize-field! {:node node

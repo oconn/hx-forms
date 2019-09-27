@@ -1,7 +1,12 @@
 (ns hx-forms.components.checkbox
   (:require
    [hx.react :refer [defnc]]
-   [hx.hooks :as hooks]))
+   [hx.hooks :as hooks]
+
+   [hx-forms.components.field :refer [Field]]
+   [hx-forms.utils :as u]))
+
+(def node-key :hx/checkbox)
 
 (defnc CheckboxComponent
   [{:keys [default-value label on-change]
@@ -17,7 +22,7 @@
                             (toggle-checked-state (not checked)))
                :id label
                :type :button
-               :ref !ref}
+               :ref #(reset! !ref %)}
 
       (when (true? checked)
         [:span {:class ["hx-forms--checkbox-checkmark"]} "✓"])]
@@ -27,4 +32,39 @@
                 :class ["hx-forms--checkbox-label"]}
         label])]))
 
-;; TODO Write hx-forms filed component
+(defnc Checkbox
+  [{:keys [node update-state form-state is-submitting]}]
+  (let [field-key
+        (u/get-field-key node node-key)
+
+        errors
+        (u/get-field-errors form-state field-key)
+
+        is-visible
+        (u/get-field-visibility form-state field-key)
+
+        [{:keys [on-change disabled default-value]
+          :as hx-props
+          :or {on-change identity}} _]
+        (u/get-field-props node node-key)]
+
+    (hooks/useEffect
+     (fn []
+       (u/initialize-field! {:node node
+                             :node-key node-key
+                             :update-state update-state
+                             :defaults {:default-value false}}))
+     ["on-mount"])
+
+    [Field {:errors errors
+            :label (:label hx-props)
+            :field-key field-key
+            :classname ["hx-forms--checkbox-field-container"]
+            :visible is-visible}
+     [CheckboxComponent {:on-change (partial u/on-change!
+                                             {:update-state update-state
+                                              :field-key field-key
+                                              :get-value identity
+                                              :callback on-change})
+                         :disabled (or disabled is-submitting)
+                         :default-value default-value}]]))
