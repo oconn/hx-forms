@@ -11,6 +11,7 @@
    [hx-forms.components.select :as select]
    [hx-forms.components.toggle :as toggle]
    [hx-forms.components.checkbox :as checkbox]
+   [hx-forms.components.radio-group :as radio-group]
    [hx-forms.components.submit-button :as submit-button]))
 
 (defn- hx-node-type?
@@ -37,6 +38,9 @@
 
         (hx-node-type? node select/node-key)
         [select/Select hx-comp-props]
+
+        (hx-node-type? node radio-group/node-key)
+        [radio-group/RadioGroup hx-comp-props]
 
         (hx-node-type? node toggle/node-key)
         [toggle/Toggle hx-comp-props]

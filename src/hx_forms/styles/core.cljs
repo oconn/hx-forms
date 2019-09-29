@@ -9,6 +9,7 @@
    (create-font-styles {:style :body-20
                         :color :primary-500
                         :family :primary})
+   (gs [:shadows :outline])
    {:padding [(gs [:spacing :p8]) (gs [:spacing :p12])]
     :cursor :pointer
     :outline :none
@@ -22,9 +23,6 @@
 
     "&::placeholder"
     {:color (gs [:colors :gray-scale-200])}
-
-    "&:focus"
-    {:border-color (gs [:colors :primary-500])}
 
     "&:disabled"
     {:background-color (gs [:colors :gray-scale-25])
@@ -111,6 +109,7 @@
     (create-font-styles {:style :body-20
                          :color :gray-scale-500
                          :family :primary})
+    (gs [:shadows :outline])
     {:width "100%"
      :border (gs [:borders :border-primary-200-1])
      :outline :none
@@ -170,14 +169,16 @@
     :align-items :center}
 
    ".hx-forms--checkbox-button-container"
-   {:position :relative
-    :width (gs [:spacing :p20])
-    :height (gs [:spacing :p20])
-    :border (gs [:borders :border-100-1])
-    :background (gs [:colors :true-white])
-    :outline :none
-    :cursor :pointer
-    :border-radius (gs [:radius :r4])}
+   (merge
+    (gs [:shadows :outline])
+    {:position :relative
+     :width (gs [:spacing :p20])
+     :height (gs [:spacing :p20])
+     :border (gs [:borders :border-100-1])
+     :background (gs [:colors :true-white])
+     :outline :none
+     :cursor :pointer
+     :border-radius (gs [:radius :r4])})
 
    ".hx-forms--checkbox-checkmark"
    (merge
@@ -217,6 +218,35 @@
 
    ".hx-forms--field-container-hidden"
    {:display :none}
+
+   ".hx-forms--radio-group-container"
+   {:padding (gs [:spacing :p8])}
+
+   ".hx-forms--radio-group-option-container"
+   {:display :flex
+    :align-items :center
+    :margin-bottom (gs [:spacing :p8])
+
+    "& > .hx-forms--radio-group-option-button"
+    (merge
+     (gs [:shadows :outline])
+     {:margin-right (gs [:spacing :p12])
+      :border-radius "50%"
+      :width (gs [:spacing :p20])
+      :height (gs [:spacing :p20])
+      :outline :none
+      :cursor :pointer
+      :border (gs [:borders :border-50-2])})
+
+    "& > .hx-forms--radio-group-option-button-selected"
+    {:background-color (gs [:colors :primary-500])}
+
+    "& > label"
+    (merge
+     (create-font-styles {:style :caption-20
+                          :color :gray-scale-600
+                          :family :primary})
+     {:cursor :pointer})}
 
    ".hx-forms--toggle-field-container, .hx-forms--checkbox-field-container"
    {:display :flex
