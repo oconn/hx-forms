@@ -193,7 +193,7 @@
 
    ".hx-forms--checkbox-label"
    (merge
-    (create-font-styles {:style :caption-30
+    (create-font-styles {:style :caption-20
                          :color :gray-scale-600
                          :family :primary})
     {:margin (gs [:spacing :p0])
@@ -219,10 +219,12 @@
    ".hx-forms--field-container-hidden"
    {:display :none}
 
-   ".hx-forms--radio-group-container"
+   ".hx-forms--radio-group-container,
+    .hx-forms--checkbox-group-container"
    {:padding (gs [:spacing :p8])}
 
-   ".hx-forms--radio-group-option-container"
+   ".hx-forms--radio-group-option-container,
+    .hx-forms--checkbox-group-option-container"
    {:display :flex
     :align-items :center
     :margin-bottom (gs [:spacing :p8])

@@ -33,6 +33,7 @@
   (let [initial-value (or (:default-value node-props)
                           (:default-value hx-props)
                           (:default-value defaults))]
+
     {:value initial-value
      :initial-value initial-value
      :errors []
