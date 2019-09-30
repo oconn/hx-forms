@@ -39,14 +39,16 @@
 
 (def toggle-button-styles
   {".hx-forms--toggle-container"
-   {:width "40px"
-    :height "25px"
-    :border-radius "40px"
-    :border (str "1px solid " (gs [:colors :gray-scale-200]))
-    :position :relative
-    :background-color (gs [:colors :true-white])
-    :transition "background-color 0.3s ease"
-    :outline :none}
+   (merge
+    (gs [:shadows :outline])
+    {:width "40px"
+     :height "25px"
+     :border-radius "40px"
+     :border (str "1px solid " (gs [:colors :gray-scale-200]))
+     :position :relative
+     :background-color (gs [:colors :true-white])
+     :transition "background-color 0.3s ease"
+     :outline :none})
 
    ".hx-forms--toggle-container-on"
    {:background-color (str (gs [:colors :primary-500]) " !important")}
@@ -143,7 +145,8 @@
      :width "0"
      :height "0"
      :border-left "5px solid transparent"
-     :border-right "5px solid transparent"}
+     :border-right "5px solid transparent"
+     :background-color (gs [:colors :true-white])}
 
     "& > button"
     {:border-radius (gs [:radius :r4])
@@ -238,6 +241,7 @@
       :height (gs [:spacing :p20])
       :outline :none
       :cursor :pointer
+      :padding (gs [:spacing :p0])
       :border (gs [:borders :border-50-2])})
 
     "& > .hx-forms--radio-group-option-button-selected"
