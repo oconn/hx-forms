@@ -19,7 +19,7 @@
     :background-color (gs [:colors :true-white])
     :color (gs [:colors :gray-scale-500])
     :width "100%"
-    :border-radius (gs [:radius :r4])
+
 
     "&::placeholder"
     {:color (gs [:colors :gray-scale-200])}
@@ -73,98 +73,10 @@
 (defonce select-menu-z-index 100)
 
 (def select-styles
-  {".hx-forms--select-container"
-   {:width "100%"
-    :position :relative}
-
-   ".hx-forms--select-option-list-container"
-   {:margin (gs [:spacing :p0])
-    :box-shadow (gs [:shadows :shadow-20])
-    :display :none
-    :overflow :hidden
-    :overflow-y :scroll
-    :position :absolute
-    :width "100%"
-    :max-height (str (+ (* 5 select-button-height)
-                        (/ select-button-height 2)) "px")
-    :z-index select-menu-z-index
-
-    "& button"
-    {:border-bottom "none !important"
-
-     "&:last-child"
-     {:border-bottom (gs [:borders :border-200-1])}
-
-     "&:hover"
-     {:background-color (gs [:colors :primary-500])
-      :color (gs [:colors :true-white])}}}
-
-   ".hx-forms--select-option-list-container-open"
-   {:display "block !important"}
-
-   ".hx-forms--select-option-container"
-   {"& > *"
-    {:margin (gs [:spacing :p0])}}
-
-   ".hx-forms--select-option-button"
+  {".hx-forms--select-element"
    (merge
-    (create-font-styles {:style :body-20
-                         :color :gray-scale-500
-                         :family :primary})
-    (gs [:shadows :outline])
-    {:width "100%"
-     :border (gs [:borders :border-primary-200-1])
-     :outline :none
-     :cursor :pointer
-     :text-align :left
-     :height (str select-button-height "px")
-     :white-space :nowrap
-     :overflow :hidden
-     :text-overflow :ellipsis
-     :transition (str "background-color 0.1s ease-in-out, "
-                      "color 0.1s ease-in-out")})
-
-   ".hx-forms--select-option-button-selected"
-   {:background-color (gs [:colors :primary-300])
-    :color (str (gs [:colors :true-white]) " !important")}
-
-   ".hx-forms--select-selected-option-no-value"
-   {:color (str (gs [:colors :gray-scale-400]) " !important")}
-
-   ".hx-forms--select-option-button-no-selection"
-   {:color (gs [:colors :gray-scale-400])
-    :background-color (gs [:colors :gray-scale-25])}
-
-   ".hx-forms--select-selected-option-container"
-   {"&:before"
-    {:display :block
-     :position :absolute
-     :content "''"
-     :right (gs [:spacing :p8])
-     :top "calc(50% - 2.5px)"
-     :width "0"
-     :height "0"
-     :border-left "5px solid transparent"
-     :border-right "5px solid transparent"
-     :background-color (gs [:colors :true-white])}
-
-    "& > button"
-    {:border-radius (gs [:radius :r4])
-     ;; Does not allow overflow to enter icon
-     :padding-right (gs [:spacing :p20])}}
-
-   ".hx-forms--select-selected-option-container-open"
-   {"&:before"
-    {:border-bottom (str "5px solid " (gs [:colors :gray-scale-100]))}}
-
-   ".hx-forms--select-selected-option-container-closed"
-   {"&:before"
-    {:border-top (str "5px solid " (gs [:colors :gray-scale-100]))}}
-
-   ".hx-forms--select-option-button-disabled"
-   {:background-color (gs [:colors :gray-scale-25])
-    :border (str (gs [:borders :border-50-1]) " !important")
-    :color (str (gs [:colors :gray-scale-300]) " !important")}})
+    input-field-styles
+    {:height "50px"})})
 
 (def checkbox-styles
   {".hx-forms--checkbox-container"
@@ -175,6 +87,7 @@
    (merge
     (gs [:shadows :outline])
     {:position :relative
+     :padding (gs [:spacing :p0])
      :width (gs [:spacing :p20])
      :height (gs [:spacing :p20])
      :border (gs [:borders :border-100-1])
@@ -211,7 +124,8 @@
     :padding-bottom (gs [:spacing :p16])}
 
    ".hx-forms--field-container-error > input,
-    .hx-forms--field-container-error > textarea"
+    .hx-forms--field-container-error > textarea,
+    .hx-forms--field-container-error > select"
    {:border-color (str (gs [:colors :error-500]) " !important")
     "&::placeholder"
     {:color (gs [:colors :error-100])}}

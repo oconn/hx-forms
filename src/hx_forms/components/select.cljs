@@ -1,5 +1,6 @@
 (ns hx-forms.components.select
   (:require
+   [goog.object :as gobj]
    [hx.react :refer [defnc]]
    [hx.hooks :as hooks]
 
@@ -9,86 +10,6 @@
 (def node-key :hx/select)
 
 (defonce no-selection-value "hx-forms--select-no-selection")
-
-(defnc Option
-  [{:keys [option
-           current-value
-           update-current-value
-           is-open
-           toggle-open-state
-           on-change]}]
-  (let [{:keys [value display]} option]
-    [:li {:class ["hx-forms--select-option-container"]}
-     [:button (cond-> {:on-click #(do
-                                      (.preventDefault %)
-                                      (toggle-open-state false)
-                                      (update-current-value value)
-                                      (on-change value))
-                       :class ["hx-forms--select-option-button"]}
-                (nil? value)
-                (update :class
-                        conj
-                        "hx-forms--select-option-button-no-selection")
-
-                (= current-value value)
-                (update :class
-                        conj
-                        "hx-forms--select-option-button-selected"))
-      display]]))
-
-(defnc SelectComponent
-  [{:keys [on-change no-value-copy options disabled default-value]
-    :or {disabled false
-         on-change identity
-         no-value-copy "Select an option"
-         options []}}]
-  (let [[current-value update-current-value] (hooks/useState default-value)
-        [is-open toggle-open-state] (hooks/useState false)
-        toggle-open #(when-not disabled
-                       (toggle-open-state (not is-open)))
-        options* (into [{:display no-value-copy :value nil}] options)
-        selected-option (->> options*
-                             (filter #(= current-value (:value %)))
-                             (first))]
-    [:div {:class ["hx-forms--select-container"]}
-     [:div (cond-> {:on-click toggle-open
-                    :class ["hx-forms--select-option-container"
-                            "hx-forms--select-selected-option-container"]}
-             (true? is-open)
-             (update :class
-                     conj
-                     "hx-forms--select-selected-option-container-open")
-
-             (false? is-open)
-             (update :class
-                     conj
-                     "hx-forms--select-selected-option-container-closed"))
-      [:button (cond-> {:on-click #(.preventDefault %)
-                        :disabled disabled
-                        :class ["hx-forms--select-option-button"]}
-                 (nil? current-value)
-                 (update :class
-                         conj
-                         "hx-forms--select-selected-option-no-value")
-
-                 (true? disabled)
-                 (update :class
-                         conj
-                         "hx-forms--select-option-button-disabled"))
-       (:display selected-option)]]
-     [:ul (cond-> {:class ["hx-forms--select-option-list-container"]}
-            (true? is-open)
-            (update :class
-                    conj
-                    "hx-forms--select-option-list-container-open"))
-      (for [option options*]
-        ^{:key (or (:value option) no-selection-value)}
-        [Option {:option option
-                 :current-value current-value
-                 :update-current-value update-current-value
-                 :is-open is-open
-                 :toggle-open-state toggle-open-state
-                 :on-change on-change}])]]))
 
 (defnc Select
   [{:keys [node update-state form-state is-submitting]}]
@@ -101,9 +22,10 @@
         is-visible
         (u/get-field-visibility form-state field-key)
 
-        [{:keys [on-change options disabled default-value]
+        [{:keys [on-change options disabled default-value select-option-text]
           :as hx-props
-          :or {on-change identity}} _]
+          :or {on-change identity
+               select-option-text "Select an option"}} _]
         (u/get-field-props node node-key)]
 
 
@@ -123,11 +45,19 @@
             :label (:label hx-props)
             :field-key field-key
             :visible is-visible}
-     [SelectComponent {:on-change (partial u/on-change!
-                                           {:update-state update-state
-                                            :field-key field-key
-                                            :get-value identity
-                                            :callback on-change})
-                       :disabled (or disabled is-submitting)
-                       :options options
-                       :default-value default-value}]]))
+     [:select {:class ["hx-forms--select-element"]
+               :on-change #(let [value (gobj/getValueByKeys % "target" "value")]
+                             (u/on-change!
+                              {:update-state update-state
+                               :field-key field-key
+                               :get-value identity
+                               :callback on-change}
+                              (if (= no-selection-value value)
+                                nil value)))
+               :default-value default-value
+               :disabled (or disabled is-submitting)}
+      (for [{:keys [value display]}
+            (into [{:value no-selection-value :display select-option-text}]
+                  options)]
+        ^{:key value}
+        [:option {:value value} display])]]))
