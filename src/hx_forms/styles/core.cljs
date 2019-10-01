@@ -257,6 +257,7 @@
 
     ".hx-forms--submit-button-container"
     {:position :relative
+     :border-radius (gs [:spacing :p0])
 
      "& > button, & > input[type=submit]"
      (merge primary-button-styles)}}))
