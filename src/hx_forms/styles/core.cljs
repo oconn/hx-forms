@@ -168,12 +168,15 @@
                           :family :primary})
      {:cursor :pointer})}
 
-   ".hx-forms--toggle-field-container, .hx-forms--checkbox-field-container"
+   ".hx-forms--toggle-field-container,
+    .hx-forms--checkbox-field-container"
    {:display :flex
     :align-items :center
 
     "& > label"
-    {:margin-right (gs [:spacing :p12])}}
+    {:margin-right (gs [:spacing :p12])
+     :display :inline-block
+     :width :auto}}
 
    ".hx-forms--field-active-error"
    (merge
@@ -187,7 +190,9 @@
    (merge
     (create-font-styles {:style :caption-30
                          :color :gray-scale-600
-                         :family :primary}))})
+                         :family :primary})
+    {:display :block
+     :width "100%"})})
 
 (def responsive-styles
   {".hx-forms--row-4-2-1"

@@ -11,6 +11,17 @@
 
 (defonce no-selection-value "hx-forms--select-no-selection")
 
+(defnc SelectComponent
+  [{:keys [on-change options disabled default-value]
+    :or {disabled false}}]
+  [:select {:class ["hx-forms--select-element"]
+            :on-change on-change
+            :default-value default-value
+            :disabled disabled}
+   (for [{:keys [value display]} options]
+     ^{:key value}
+     [:option {:value value} display])])
+
 (defnc Select
   [{:keys [node update-state form-state is-submitting]}]
   (let [field-key
@@ -45,19 +56,16 @@
             :label (:label hx-props)
             :field-key field-key
             :visible is-visible}
-     [:select {:class ["hx-forms--select-element"]
-               :on-change #(let [value (gobj/getValueByKeys % "target" "value")]
-                             (u/on-change!
-                              {:update-state update-state
-                               :field-key field-key
-                               :get-value identity
-                               :callback on-change}
-                              (if (= no-selection-value value)
-                                nil value)))
-               :default-value default-value
-               :disabled (or disabled is-submitting)}
-      (for [{:keys [value display]}
-            (into [{:value no-selection-value :display select-option-text}]
-                  options)]
-        ^{:key value}
-        [:option {:value value} display])]]))
+     [SelectComponent
+      {:on-change #(let [value (gobj/getValueByKeys % "target" "value")]
+                     (u/on-change!
+                      {:update-state update-state
+                       :field-key field-key
+                       :get-value identity
+                       :callback on-change}
+                      (if (= no-selection-value value)
+                        nil value)))
+       :default-value default-value
+       :disabled (or disabled is-submitting)
+       :options (into [{:value no-selection-value :display select-option-text}]
+                      options)}]]))
