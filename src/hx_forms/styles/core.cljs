@@ -245,6 +245,7 @@
     "input[type=url]" input-field-styles
     "input[type=password]" input-field-styles
     "input[type=date]" input-field-styles
+    "input[type=datetime-local]" input-field-styles
     "textarea" (merge input-field-styles
                       textarea-field-styles)
 
