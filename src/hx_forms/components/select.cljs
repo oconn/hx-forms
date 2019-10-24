@@ -12,12 +12,16 @@
 (defonce no-selection-value "hx-forms--select-no-selection")
 
 (defnc SelectComponent
-  [{:keys [on-change options disabled default-value]
+  [{:keys [on-change options disabled default-value value]
     :or {disabled false}}]
+
   [:select {:class ["hx-forms--select-element"]
             :on-change on-change
             :default-value default-value
-            :disabled disabled}
+            :disabled disabled
+            :value (if (nil? value)
+                     no-selection-value
+                     value)}
    (for [{:keys [value display]} options]
      ^{:key value}
      [:option {:value value} display])])
@@ -26,6 +30,9 @@
   [{:keys [node update-state form-state is-submitting]}]
   (let [field-key
         (u/get-field-key node node-key)
+
+        field-value
+        (u/get-field-value form-state field-key)
 
         errors
         (u/get-field-errors form-state field-key)
@@ -38,7 +45,6 @@
           :or {on-change identity
                select-option-text "Select an option"}} _]
         (u/get-field-props node node-key)]
-
 
     (when (nil? options)
       (js/console.error
@@ -65,6 +71,7 @@
                        :callback on-change}
                       (if (= no-selection-value value)
                         nil value)))
+       :value field-value
        :default-value default-value
        :disabled (or disabled is-submitting)
        :options (into [{:value no-selection-value :display select-option-text}]
