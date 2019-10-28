@@ -1,14 +1,83 @@
-### hx-form
+### hx-forms
 
 Form library built for [hx](https://github.com/Lokeh/hx)
 
-[Demo Site]()
+[Demo Site](https://d39iaf8kr29b5t.cloudfront.net)
 
 ## Install
 
 [![Clojars Project](https://img.shields.io/clojars/v/oconn/hx-forms.svg)](https://clojars.org/oconn/hx-forms)
 
 **Note** This project is currently in alpha and the API may change in future releases.
+
+## Project Goals
+
+1. Unopinionated when it comes to how form markup is structured
+1. Extendable
+1. Form state management only (bring your own styles)
+1. User friendly (Accessible & Intuitive)
+
+## Basic Usage
+
+Turning an HTML form into an hx-form requires wrapping the form in `HXForm` and adding the hx-form keys to each form element you would like to track.
+
+```clojure
+(ns app.core
+  (require [hx-forms.core :refer [HXForm]])
+
+;; HTML Form
+[:form {:on-submit #()}
+  [:input {:type "text}]
+  [:input {:type "submit
+           :value "Submit]]
+
+;; HXForm
+[HXForm
+  {:body
+   [:form {:hx/form {:on-submit #()}}
+    [:input {:type "text
+             :hx/input {:field-key :sample-field}}]
+
+    [:input
+      {:hx/submit-button {}
+       :type "submit"
+       :value "Submit"}]]]}]
+```
+
+### Validators
+
+**TODO**
+
+```clojure
+(ns app.core
+  (require [hx-forms.core :refer [HXForm]]
+           [hx-forms.validators :as v])
+
+[:input {:type "text
+         :hx/input {:field-key :sample-field
+                    :validators [{:validator v/required-input
+                                  :error "Please enter a value."}]}}]
+```
+
+### Formatters / Masks
+
+**TODO**
+
+### Transformers (Data transformations)
+
+**TODO**
+
+### Dynamic Fields
+
+**TODO**
+
+## Creating Custom Components
+
+**TODO**
+
+## Styling your forms
+
+hx-forms does not take a strong stance on how you choose to style your forms. There is some sample styles (same styles applied to the demo site) in `hx-forms.styles.core`.
 
 ## Code Samples
 
