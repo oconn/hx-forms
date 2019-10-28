@@ -27,15 +27,15 @@ Turning an HTML form into an hx-form requires wrapping the form in `HXForm` and 
 
 ;; HTML Form
 [:form {:on-submit #()}
-  [:input {:type "text}]
-  [:input {:type "submit
-           :value "Submit]]
+  [:input {:type "text"}]
+  [:input {:type "submit"
+           :value "Submit"]]
 
 ;; HXForm
 [HXForm
   {:body
    [:form {:hx/form {:on-submit #()}}
-    [:input {:type "text
+    [:input {:type "text"
              :hx/input {:field-key :sample-field}}]
 
     [:input
@@ -46,14 +46,14 @@ Turning an HTML form into an hx-form requires wrapping the form in `HXForm` and 
 
 ### Validators
 
-**TODO**
+**TODO** Add documentation
 
 ```clojure
 (ns app.core
   (require [hx-forms.core :refer [HXForm]]
            [hx-forms.validators :as v])
 
-[:input {:type "text
+[:input {:type "text"
          :hx/input {:field-key :sample-field
                     :validators [{:validator v/required-input
                                   :error "Please enter a value."}]}}]
@@ -61,19 +61,19 @@ Turning an HTML form into an hx-form requires wrapping the form in `HXForm` and 
 
 ### Formatters / Masks
 
-**TODO**
+**TODO** Add documentation
 
 ### Transformers (Data transformations)
 
-**TODO**
+**TODO** Add documentation
 
 ### Dynamic Fields
 
-**TODO**
+**TODO** Add documentation
 
 ## Creating Custom Components
 
-**TODO**
+**TODO** Add documentation
 
 ## Styling your forms
 
